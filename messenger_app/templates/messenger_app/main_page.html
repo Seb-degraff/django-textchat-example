@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Hello, Django</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                /* padding: 0% 20%; */
+            }
+
+            #messages-container {
+                overflow: scroll;
+                max-height: calc(100vh - 70px );
+            }
+
+            #input-form {
+                background-color: lightblue;
+                position: fixed;
+                bottom: 0px;
+                padding: 20px;
+            }
+        </style>
+    </head>
+    <body>        
+        <!-- {% for message in messages %}
+            <p>{{ message.text }}</p>
+        {% endfor %} -->
+
+        <div id="messages-container">
+            
+        </div>
+
+        <form id="input-form" action="" method="post">
+            {% csrf_token %}
+            <label>message:</label> <input name="message-text" type="text"></input> <button type="submit">Send!</button>
+        </form>
+
+        <script>
+
+            messages = [];
+
+            var form = document.getElementById("input-form");
+            form.onsubmit = (event) => {
+                fetch()
+                event.preventDefault();
+            };
+
+            function refresh_messages() {
+                fetch("/all-messages")
+                    .then(data => data.json())
+                    .then(data => {
+                        messages = data.messages;
+                        console.log(messages);
+                        renders_messages()
+                        setTimeout(() => { refresh_messages() }, 1000);
+                    })
+            }
+
+            function renders_messages() {
+                var container = document.getElementById("messages-container");
+                container.innerText = "";
+                for (message of messages) 
+                {
+                    container.innerHTML += "<p>"
+                    container.innerHTML += message
+                    container.innerHTML += "</p>"
+                }
+                scrollToBottom(container);
+            }
+            
+            function scrollToBottom(element) {
+                element.scrollTop = element.scrollHeight;
+            }
+
+            refresh_messages();
+        </script>
+
+    </body>
+</html>
