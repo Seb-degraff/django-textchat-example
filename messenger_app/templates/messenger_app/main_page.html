@@ -30,9 +30,18 @@
             <p>{{ message.text }}</p>
         {% endfor %} -->
 
+        <p>Logged in as: {{ username }}</p><a href="/logout">Logout</a>
+        <form id="login-form" action="/login" method="post">
+            {% csrf_token %}
+            <label>username:</label> <input name="username" type="text"></input>
+            <label>password:</label> <input name="password" type="password"></input>
+            <button type="submit">Send!</button>
+        </form>
+
         <div id="messages-container">
             
         </div>
+
 
         <form id="input-form" action="" method="post">
             {% csrf_token %}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Login</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                /* padding: 0% 20%; */
+            }
+
+            #messages-container {
+                overflow: scroll;
+                max-height: calc(100vh - 70px );
+            }
+
+            #input-form {
+                background-color: lightblue;
+                position: fixed;
+                bottom: 0px;
+                padding: 20px;
+            }
+
+            .error-text {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>        
+        <p>Logged in as: {{ username }}</p>
+
+        <form id="login-form" action="/login" method="post">
+            {% csrf_token %}
+            <label>username:</label> <input name="username" type="text"></input>
+            <label>password:</label> <input name="password" type="password"></input>
+            <button type="submit">Send!</button>
+            <p class="error-text" id="error-text">{{ error_text }}</p>
+        </form>
+
+    </body>
+</html>
