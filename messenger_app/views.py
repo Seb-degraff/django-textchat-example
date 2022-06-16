@@ -6,23 +6,33 @@ from django.shortcuts import render
 #from django.views.decorators.csrf import csrf_exempt
 from .models import Message
 from django.contrib import auth
+from django.views.decorators.csrf import csrf_exempt
+import json
+
 
 def main_view(request):
-    print(request.user)
-    sent_message_text = request.POST.get("message-text", "")
-    if (sent_message_text != ""):
-        new_message = Message.objects.create()
-        new_message.text = sent_message_text
-        new_message.save()
-
     messages = Message.objects.all()
 
     return render(request, "messenger_app/main_page.html", {
-        "send_message": sent_message_text,
         "messages": messages,
         "username": request.user.username,
     })
 
+@csrf_exempt
+def send_message(request):
+    request_data = json.loads(request.body)
+    print(request_data)
+    sent_message_text = request_data["message-text"]
+    print(sent_message_text)
+    if (sent_message_text):
+        new_message = Message.objects.create()
+        new_message.text = sent_message_text
+        new_message.save()
+        return HttpResponse("ok")
+    return HttpResponse("no message provided (POST: message-text)")
+
+
+    
 def get_all_messages(request):
     messages = Message.objects.all()
     

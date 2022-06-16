@@ -14,7 +14,7 @@
 
             #messages-container {
                 overflow: scroll;
-                max-height: calc(100vh - 70px );
+                max-height: calc(100vh - 160px );
             }
 
             #input-form {
@@ -45,17 +45,28 @@
 
         <form id="input-form" action="" method="post">
             {% csrf_token %}
-            <label>message:</label> <input name="message-text" type="text"></input> <button type="submit">Send!</button>
+            <label>message:</label> <input id="message-text" name="message-text" type="text"></input> <button type="submit">Send!</button>
         </form>
 
         <script>
 
             messages = [];
+            want_to_scroll_to_bottom = true // when true, the scroll view is scrolled all the way down after the next refresh
 
             var form = document.getElementById("input-form");
+            var message_field = document.getElementById("message-text");
+
             form.onsubmit = (event) => {
-                fetch()
-                event.preventDefault();
+                event.preventDefault(); // prevents the page from reloading
+
+                fetch("/send-message", {
+                    "method": "POST",
+                    "body": JSON.stringify({
+                        "message-text": message_field.value,
+                    }),
+                });
+                
+                want_to_scroll_to_bottom = true;
             };
 
             function refresh_messages() {
@@ -78,7 +89,10 @@
                     container.innerHTML += message
                     container.innerHTML += "</p>"
                 }
-                scrollToBottom(container);
+                if (want_to_scroll_to_bottom) {
+                    scrollToBottom(container);
+                    want_to_scroll_to_bottom = false;
+                }
             }
             
             function scrollToBottom(element) {
